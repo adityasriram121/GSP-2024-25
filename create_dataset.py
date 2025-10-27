@@ -72,4 +72,8 @@ try:
 except Exception as e:
     print("An error occurred while saving:", e)
 
+try:
+    hands.close()
+except Exception:
+    pass
 

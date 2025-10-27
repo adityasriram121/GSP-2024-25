@@ -2,6 +2,7 @@ import pickle
 import cv2
 import mediapipe as mp
 import numpy as np
+import os
 
 # Load the trained model
 with open('./model.p', 'rb') as f:
@@ -15,7 +16,6 @@ mp_drawing_styles = mp.solutions.drawing_styles
 hands = mp_hands.Hands(static_image_mode=False, max_num_hands=1, min_detection_confidence=0.5)
 
 # Label dictionary for predictions
-labels_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D'}
 
 def extract_full_landmark_data(hand_landmarks):
     """
@@ -32,7 +32,7 @@ def predict_sign(data):
     """
     try:
         prediction = model.predict([data])[0]
-        return labels_dict.get(int(prediction), '?')
+        return str(prediction)
     except Exception as e:
         print(f"Prediction error: {e}")
         return "?"
@@ -48,7 +48,7 @@ def draw_predictions(frame, label, bounding_box):
     cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 255, 0), 3, cv2.LINE_AA)
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(int(os.environ.get('CAM_INDEX', '0')))
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -105,3 +105,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+

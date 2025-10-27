@@ -1,9 +1,18 @@
 import cv2
 import os
 import time
+import argparse
+# CLI args for camera index
+parser = argparse.ArgumentParser(description='Capture images for a class label')
+parser.add_argument('--cam', type=int, default=None, help='Camera index (overrides CAM_INDEX env)')
+args, unknown = parser.parse_known_args()
+cam_index = args.cam if args.cam is not None else int(os.environ.get('CAM_INDEX', '0'))
 
 # Initialize the camera
-cap = cv2.VideoCapture(1)  # Use 0 for default camera, change if necessary
+cap = cv2.VideoCapture(cam_index)
+if not cap.isOpened():
+    print(f'Failed to open camera index {cam_index}. Try a different index.')
+    raise SystemExit(1)
 
 # Create data directory if it doesn't exist
 data_dir = 'data'
@@ -56,3 +65,8 @@ cap.release()
 cv2.destroyAllWindows()
 
 print(f"Total images captured for {class_name}: {counter}")
+
+
+
+
+
